@@ -19,13 +19,22 @@ record(bo, "$(P)DISABLE") {
 record(ai, "$(P)VOLT") {
     field(DESC, "Voltage of the Kicker PSU")
     field(DTYP, "Soft Channel")
-    field(SCAN, "1 second")
-    field(INP, "$(DAQMX)R00:DATA:_RAW CA MS")
-    field(EGU, "V")
-    
+    field(EGU, "kV")
+
     info(INTEREST, "HIGH")
     info(archive, "VAL")
     
     field(SDIS, "$(P)DISABLE")
-      field(TPRO, "1")
+}
+
+record(calcout, "$(P)CALIBRATE:VOLT"){
+    field(DESC, "Calibrates the voltage")
+    field(DTYP, "Soft Channel")
+    
+    field(INPA, "$(DAQMX)R00:DATA:_RAW CP MS")
+    field(CALC, "A * 45 / 10")
+    
+    field(OUT, "$(P)VOLT")
+    field(OOPT, "On Change")
+    field(DOPT, "Use CALC")
 }
