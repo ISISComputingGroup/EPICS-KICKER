@@ -1,5 +1,4 @@
-record(bo, "$(P)SIM")
-{
+record(bo, "$(P)SIM") {
     field(SCAN, "Passive")
     field(DTYP, "Soft Channel")
     field(ZNAM, "NO")
@@ -8,12 +7,25 @@ record(bo, "$(P)SIM")
     field(PINI, "YES")
 }
 
-record(bo, "$(P)DISABLE")
-{
+record(bo, "$(P)DISABLE") {
     field(DESC, "Disable comms")
     field(PINI, "YES")
     field(VAL, "$(DISABLE=0)")
     field(OMSL, "supervisory")
     field(ZNAM, "COMMS ENABLED")
     field(ONAM, "COMMS DISABLED")
+}
+
+record(ai, "$(P)VOLT") {
+    field(DESC, "Voltage of the Kicker PSU")
+    field(DTYP, "Soft Channel")
+    field(SCAN, "1 second")
+    field(INP, "$(DAQMX)R00:DATA:_RAW CA MS")
+    field(EGU, "V")
+    
+    info(INTEREST, "HIGH")
+    info(archive, "VAL")
+    
+    field(SDIS, "$(P)DISABLE")
+      field(TPRO, "1")
 }
