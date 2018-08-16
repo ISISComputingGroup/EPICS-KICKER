@@ -20,6 +20,16 @@ record(ai, "$(P)VOLT") {
     field(DESC, "Voltage of the Kicker PSU")
     field(DTYP, "Soft Channel")
     field(EGU, "kV")
+    field(PREC, "3")
+    field(HOPR, "$(PSU_MAX_VOLT)")
+    field(LOPR, "0")
+    field(INP, "$(P)CALIBRATE:VOLT CP MS")
+    
+        
+    field(HIGH, "$(PSU_MAX_VOLT)")
+    field(HSV, "MAJOR")
+    field(LOW, "0")
+    field(LSV, "MAJOR")
 
     info(INTEREST, "HIGH")
     info(archive, "VAL")
@@ -27,14 +37,10 @@ record(ai, "$(P)VOLT") {
     field(SDIS, "$(P)DISABLE")
 }
 
-record(calcout, "$(P)CALIBRATE:VOLT"){
+record(calc, "$(P)CALIBRATE:VOLT"){
     field(DESC, "Calibrates the voltage")
     field(DTYP, "Soft Channel")
     
     field(INPA, "$(DAQMX)R00:DATA:_RAW CP MS")
-    field(CALC, "A * 45 / 10")
-    
-    field(OUT, "$(P)VOLT")
-    field(OOPT, "On Change")
-    field(DOPT, "Use CALC")
+    field(CALC, "A * $(PSU_MAX_VOLT) / 10")
 }
