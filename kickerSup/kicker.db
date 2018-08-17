@@ -39,8 +39,6 @@ record(ai, "$(P)VOLT") {
 
 record(calc, "$(P)CALIBRATE:VOLT"){
     field(DESC, "Calibrates the voltage")
-    field(DTYP, "Soft Channel")
-    
     field(INPA, "$(DAQMX)R00:DATA:_RAW CP MS")
     field(CALC, "A * $(PSU_MAX_VOLT) / 10")
 }
@@ -69,9 +67,7 @@ record(ai, "$(P)CURR") {
 }
 
 record(calc, "$(P)CALIBRATE:CURR"){
-    field(DESC, "Calibrates the voltage")
-    field(DTYP, "Soft Channel")
-    
+    field(DESC, "Calibrates the current")    
     field(INPA, "$(DAQMX)R02:DATA:_RAW CP MS")
     field(CALC, "A * $(PSU_MAX_CURR) / 10")
 }
