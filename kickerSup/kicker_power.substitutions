@@ -1,0 +1,6 @@
+file "..\..\..\modbus\master\modbusApp\Db\bi_bit.template" { 
+
+pattern
+{P,            R,            PORT,         OFFSET,   ZNAM,   ONAM,    ZSV,       OSV,       SCAN}
+{"\$(P)",     "POWER",    "\$(DEVICE):PLC",         "0",     "Low",    "High",  "NO_ALARM",  "NO_ALARM",  "I/O Intr"}
+}
