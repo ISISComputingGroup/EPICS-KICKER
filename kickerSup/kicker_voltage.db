@@ -1,0 +1,90 @@
+record(ai, "$(P)VOLT")
+{
+  field(DESC, "Voltage")
+  field(EGU, "kV")
+  field(DTYP, "Soft Channel")
+  field(INP,  "$(P)CALIBRATE:VOLT CP MS")
+  field(PREC, "5")
+  
+  field(HIGH, "$(PSU_MAX_VOLT)")
+  field(HSV, "MAJOR")
+  
+  field(LOW, "0")
+  field(LSV, "MAJOR")
+  
+  info(INTEREST, "HIGH")
+  info(archive, "VAL")
+}
+
+record(calc, "$(P)CALIBRATE:VOLT")
+{
+    field(DESC, "Calibrates the voltage")
+    field(INPA, "$(DAQMX)VOLT:DATA CP MS")
+    field(CALC, "A * $(PSU_MAX_VOLT) / 10")
+    field(PREC, "5")
+}
+
+record(subArray, "$(DAQMX)VOLT:DATA") {
+  field(DESC, "Gets the raw voltage data")
+  field(PINI, "NO")
+  field(DTYP, "Soft Channel")
+  field(PREC, "5")
+  field(INP, "$(DAQMX)VOLT:_RAW CP MS")
+  field(NELM, "1")
+  field(INDX, "0")
+  field(FTVL, "DOUBLE")
+}
+
+record(waveform, "$(DAQMX)VOLT:_RAW") {
+  $(IFNOTRECSIM) field(SCAN,"I/O Intr")
+  field(PINI, "NO")
+  $(IFNOTRECSIM)  field(DTYP, "asynFloat64ArrayIn")
+  $(IFRECSIM) field(DTYP, "Soft Channel")
+  field(PREC, "5")
+  field(INP, "@asyn(R0 2 5.0) DATA")
+  field(NELM, "1000")
+  field(FTVL, "DOUBLE")
+  field(EVNT, "1")
+  field(SIML, "$(P)SIM")
+  field(SIOL, "$(DAQMX)VOLT:WV:SIM CP")
+}
+
+record(calcout, "$(DAQMX)VOLT:ACQUIRE:_TRIG") {
+
+  field(INPA, "$(DAQMX)VOLT:ACQUIRE.VAL CP MS")
+  field(CALC, "!A")
+  field(OUT, "$(DAQMX)VOLT:ACQUIRE.VAL PP")
+  field(OOPT, "When Non-zero")
+}
+
+record(longout, "$(DAQMX)VOLT:ACQUIRE") {
+  field(SCAN, ".5 second")
+  field(DTYP, "asynUInt32Digital")
+  field(OUT, "@asynMask(R0 2 0x01) ACQUIRE")
+}
+## SIM RECORDS
+
+record(waveform,  "$(DAQMX)VOLT:WV:SIM") {
+  field(DESC,  "Voltage simulation")
+  field(NELM,  "1000")
+  field(FTVL,  "DOUBLE")
+}
+
+record(acalcout, "$(DAQMX)VOLT:SIM:CALC"){
+  field(DESC, "Converts voltage to waveform")
+  field(INPA, "$(DAQMX)VOLT:SIM CP")
+  field(CALC, "ARR(A)")
+  field(NELM,  "1000")
+
+  field(OOPT, "Every Time")
+  field(OUT, "$(DAQMX)VOLT:WV:SIM PP")
+  field(DOPT, "Use CALC")
+}
+
+record(ai, "$(DAQMX)VOLT:SIM") {
+  field(DESC, "Device voltage")
+  field(DTYP, "Soft Channel")
+  field(PREC, "5")
+}
+
+    
