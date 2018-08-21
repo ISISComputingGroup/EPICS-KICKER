@@ -9,11 +9,12 @@ record(ai, "$(P)VOLT")
   field(HIGH, "$(PSU_MAX_VOLT)")
   field(HSV, "MAJOR")
   
-  field(LOW, "0")
+  field(LOW, "-1")
   field(LSV, "MAJOR")
   
   info(INTEREST, "HIGH")
   info(archive, "VAL")
+  field(TPRO, "1")
 }
 
 record(calc, "$(P)CALIBRATE:VOLT")
@@ -22,6 +23,7 @@ record(calc, "$(P)CALIBRATE:VOLT")
     field(INPA, "$(DAQMX)VOLT:DATA CP MS")
     field(CALC, "A * $(PSU_MAX_VOLT) / 10")
     field(PREC, "5")
+    field(TPRO, "1")
 }
 
 record(subArray, "$(DAQMX)VOLT:DATA") {
@@ -33,6 +35,7 @@ record(subArray, "$(DAQMX)VOLT:DATA") {
   field(NELM, "1")
   field(INDX, "0")
   field(FTVL, "DOUBLE")
+  field(TPRO, "1")
 }
 
 record(waveform, "$(DAQMX)VOLT:_RAW") {
@@ -41,27 +44,32 @@ record(waveform, "$(DAQMX)VOLT:_RAW") {
   $(IFNOTRECSIM)  field(DTYP, "asynFloat64ArrayIn")
   $(IFRECSIM) field(DTYP, "Soft Channel")
   field(PREC, "5")
-  field(INP, "@asyn(R0 2 5.0) DATA")
+  field(INP, "@asyn(R0 0 5.0) DATA")
   field(NELM, "1000")
   field(FTVL, "DOUBLE")
   field(EVNT, "1")
   field(SIML, "$(P)SIM")
   field(SIOL, "$(DAQMX)VOLT:WV:SIM CP")
+  field(TPRO, "1")
 }
 
-record(calcout, "$(DAQMX)VOLT:ACQUIRE:_TRIG") {
-
+record(calcout, "$(DAQMX)VOLT:ACQUIRE:_TRIG")
+{
   field(INPA, "$(DAQMX)VOLT:ACQUIRE.VAL CP MS")
   field(CALC, "!A")
   field(OUT, "$(DAQMX)VOLT:ACQUIRE.VAL PP")
   field(OOPT, "When Non-zero")
+  field(TPRO, "1")
 }
 
-record(longout, "$(DAQMX)VOLT:ACQUIRE") {
+record(longout, "$(DAQMX)VOLT:ACQUIRE")
+{
   field(SCAN, ".5 second")
   field(DTYP, "asynUInt32Digital")
   field(OUT, "@asynMask(R0 2 0x01) ACQUIRE")
+  field(TPRO, "1")
 }
+
 ## SIM RECORDS
 
 record(waveform,  "$(DAQMX)VOLT:WV:SIM") {

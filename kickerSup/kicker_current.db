@@ -41,7 +41,7 @@ record(waveform, "$(DAQMX)CURR:_RAW") {
   $(IFNOTRECSIM)  field(DTYP, "asynFloat64ArrayIn")
   $(IFRECSIM) field(DTYP, "Soft Channel")
   field(PREC, "5")
-  field(INP, "@asyn(R0 2 5.0) DATA")
+  field(INP, "@asyn(R0 1 5.0) DATA")
   field(NELM, "1000")
   field(FTVL, "DOUBLE")
   field(EVNT, "1")
@@ -58,9 +58,9 @@ record(calcout, "$(DAQMX)CURR:ACQUIRE:_TRIG") {
 }
 
 record(longout, "$(DAQMX)CURR:ACQUIRE") {
-  field(SCAN, ".5 second")
+  field(SCAN, "1 second")
   field(DTYP, "asynUInt32Digital")
-  field(OUT, "@asynMask(R0 2 0x01) ACQUIRE")
+  field(OUT, "@asynMask(R0 1 0x01) ACQUIRE")
 }
 ## SIM RECORDS
 
