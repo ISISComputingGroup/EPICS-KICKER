@@ -95,5 +95,3 @@ record(ai, "$(DAQMX)VOLT:SIM") {
   field(DTYP, "Soft Channel")
   field(PREC, "5")
 }
-
-    
