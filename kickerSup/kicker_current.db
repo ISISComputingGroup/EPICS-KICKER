@@ -94,4 +94,3 @@ record(ai, "$(DAQMX)CURR:SIM") {
     field(DTYP, "Soft Channel")
     field(PREC, "5")
 }
- 
