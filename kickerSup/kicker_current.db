@@ -1,23 +1,21 @@
-record(ai, "$(P)CURR")
-{
-  field(DESC, "Current")
-  field(EGU, "mA")
-  field(DTYP, "Soft Channel")
-  field(INP,  "$(P)CALIBRATE:CURR CP MS")
-  field(PREC, "5")
-  
-  field(HIGH, "$(PSU_MAX_CURR)")
-  field(HSV, "MAJOR")
-  
-  field(LOW, "0")
-  field(LSV, "MAJOR")
-  
-  info(INTEREST, "HIGH")
-  info(archive, "VAL")
+record(ai, "$(P)CURR") {
+    field(DESC, "Kicker PSU current")
+    field(EGU, "mA")
+    field(DTYP, "Soft Channel")
+    field(INP,  "$(P)CALIBRATE:CURR CP MS")
+    field(PREC, "5")
+
+    field(HIGH, "$(PSU_MAX_CURR)")
+    field(HSV, "MAJOR")
+
+    field(LOW, "0")
+    field(LSV, "MAJOR")
+
+    info(INTEREST, "HIGH")
+    info(archive, "VAL")
 }
 
-record(calc, "$(P)CALIBRATE:CURR")
-{
+record(calc, "$(P)CALIBRATE:CURR") {
     field(DESC, "Calibrates the current")
     field(INPA, "$(DAQMX)CURR:DATA CP MS")
     field(CALC, "A * $(PSU_MAX_CURR) / 10")
@@ -25,66 +23,76 @@ record(calc, "$(P)CALIBRATE:CURR")
 }
 
 record(subArray, "$(DAQMX)CURR:DATA") {
-  field(DESC, "Gets the raw current data")
-  field(PINI, "NO")
-  field(DTYP, "Soft Channel")
-  field(PREC, "5")
-  field(INP, "$(DAQMX)CURR:_RAW CP MS")
-  field(NELM, "1")
-  field(INDX, "0")
-  field(FTVL, "DOUBLE")
+    field(DESC, "Reads a single raw current val")
+    field(PINI, "NO")
+    field(DTYP, "Soft Channel")
+    field(PREC, "5")
+    field(INP, "$(DAQMX)CURR:_RAW CP MS")
+    field(NELM, "1")
+    field(INDX, "0")
+    field(FTVL, "DOUBLE")
 }
 
 record(waveform, "$(DAQMX)CURR:_RAW") {
-  $(IFNOTRECSIM) field(SCAN,"I/O Intr")
-  field(PINI, "NO")
-  $(IFNOTRECSIM)  field(DTYP, "asynFloat64ArrayIn")
-  $(IFRECSIM) field(DTYP, "Soft Channel")
-  field(PREC, "5")
-  field(INP, "@asyn(R0 1 5.0) DATA")
-  field(NELM, "1000")
-  field(FTVL, "DOUBLE")
-  field(EVNT, "1")
-  field(SIML, "$(P)SIM")
-  field(SIOL, "$(DAQMX)CURR:WV:SIM CP")
+    field(DESC, "Reads an array of raw current data")
+    
+    $(IFNOTRECSIM) field(SCAN,"I/O Intr")
+    $(IFNOTRECSIM) field(DTYP, "asynFloat64ArrayIn")
+    $(IFRECSIM) field(DTYP, "Soft Channel")
+    
+    field(PINI, "NO")
+    field(PREC, "5")
+    field(INP, "@asyn(R0 1 5.0) DATA")
+    field(NELM, "$(NELM)")
+    field(FTVL, "DOUBLE")
+    field(EVNT, "1")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(DAQMX)CURR:WV:SIM CP")
+
+    info(INTEREST, "LOW")
+    info(archive, "VAL")
 }
 
 record(calcout, "$(DAQMX)CURR:ACQUIRE:_TRIG") {
-
-  field(INPA, "$(DAQMX)CURR:ACQUIRE.VAL CP MS")
-  field(CALC, "!A")
-  field(OUT, "$(DAQMX)CURR:ACQUIRE.VAL PP")
-  field(OOPT, "When Non-zero")
+    field(DESC, "Triggers the ACQUIRE record.")
+    field(INPA, "$(DAQMX)CURR:ACQUIRE.VAL CP MS")
+    field(CALC, "!A")
+    field(OUT, "$(DAQMX)CURR:ACQUIRE.VAL PP")
+    field(OOPT, "When Non-zero")
 }
 
 record(longout, "$(DAQMX)CURR:ACQUIRE") {
-  field(SCAN, "1 second")
-  field(DTYP, "asynUInt32Digital")
-  field(OUT, "@asynMask(R0 1 0x01) ACQUIRE")
+    field(DESC, "Acquires the data")
+    field(SCAN, "1 second")
+    field(DTYP, "asynUInt32Digital")
+    field(OUT, "@asynMask(R0 1 0x01) ACQUIRE")
 }
+
 ## SIM RECORDS
 
 record(waveform,  "$(DAQMX)CURR:WV:SIM") {
-  field(DESC,  "Current simulation")
-  field(NELM,  "1000")
-  field(FTVL,  "DOUBLE")
+    field(DESC, "Simulates an array of data")
+    
+    field(NELM,  "$(NELM)")
+    field(FTVL,  "DOUBLE")
 }
 
 record(acalcout, "$(DAQMX)CURR:SIM:CALC"){
-  field(DESC, "Converts current to waveform")
-  field(INPA, "$(DAQMX)CURR:SIM CP")
-  field(CALC, "ARR(A)")
-  field(NELM,  "1000")
+    field(DESC, "Converts simulated current to waveform")
+    
+    field(INPA, "$(DAQMX)CURR:SIM CP")
+    field(CALC, "ARR(A)")
+    field(NELM,  "$(NELM)")
 
-  field(OOPT, "Every Time")
-  field(OUT, "$(DAQMX)CURR:WV:SIM PP")
-  field(DOPT, "Use CALC")
+    field(OOPT, "Every Time")
+    field(OUT, "$(DAQMX)CURR:WV:SIM PP")
+    field(DOPT, "Use CALC")
 }
 
 record(ai, "$(DAQMX)CURR:SIM") {
-  field(DESC, "Device current")
-  field(DTYP, "Soft Channel")
-  field(PREC, "5")
+    field(DESC, "Simulates current")
+    field(DTYP, "Soft Channel")
+    field(PREC, "5")
 }
 
     
