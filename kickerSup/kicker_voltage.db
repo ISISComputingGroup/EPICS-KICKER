@@ -9,7 +9,7 @@ record(ai, "$(P)VOLT")
   field(HIGH, "$(PSU_MAX_VOLT)")
   field(HSV, "MAJOR")
   
-  field(LOW, "-1")
+  field(LOW, "0")
   field(LSV, "MAJOR")
   
   info(INTEREST, "HIGH")
