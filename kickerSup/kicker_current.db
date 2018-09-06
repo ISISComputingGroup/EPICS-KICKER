@@ -17,23 +17,23 @@ record(ai, "$(P)CURR") {
 
 record(calc, "$(P)CALIBRATE:CURR") {
     field(DESC, "Calibrates the current")
-    field(INPA, "$(DAQMX)CURR:DATA CP MS")
+    field(INPA, "$(P)$(DAQMX)CURR:DATA CP MS")
     field(CALC, "A * $(PSU_MAX_CURR) / 10")
     field(PREC, "5")
 }
 
-record(subArray, "$(DAQMX)CURR:DATA") {
+record(subArray, "$(P)$(DAQMX)CURR:DATA") {
     field(DESC, "Reads a single raw current val")
     field(PINI, "NO")
     field(DTYP, "Soft Channel")
     field(PREC, "5")
-    field(INP, "$(DAQMX)CURR:_RAW CP MS")
+    field(INP, "$(P)$(DAQMX))CURR:_RAW CP MS")
     field(NELM, "1")
     field(INDX, "0")
     field(FTVL, "DOUBLE")
 }
 
-record(waveform, "$(DAQMX)CURR:_RAW") {
+record(waveform, "$(P)$(DAQMX)CURR:_RAW") {
     field(DESC, "Reads an array of raw current data")
     
     $(IFNOTRECSIM) field(SCAN,"I/O Intr")
@@ -47,21 +47,33 @@ record(waveform, "$(DAQMX)CURR:_RAW") {
     field(FTVL, "DOUBLE")
     field(EVNT, "1")
     field(SIML, "$(P)SIM")
-    field(SIOL, "$(DAQMX)CURR:WV:SIM CP")
+    field(SIOL, "$(P)$(DAQMX)CURR:WV:SIM CP")
 
     info(INTEREST, "LOW")
     info(archive, "VAL")
 }
 
-record(calcout, "$(DAQMX)CURR:ACQUIRE:_TRIG") {
+## The two records below work together to tell
+## the DAQ to acquire data - otherwise no data is
+## populated in $(P)$(DAQMX)CURR:_RAW record.
+## 
+## In order to acquire data we need to set the ACQUIRE record to 1.
+## The _TRIG record does this when it notices that the ACQUIRE
+## record is zero, setting the VAL field of ACQUIRE to 1.
+##
+## Next time the ACQUIRE record scans it will process the 
+## AQUIRE command with the acquire property set to 1 , 
+## triggering the asyn driver to acquire data from the DAQ.
+
+record(calcout, "$(P)$(DAQMX)CURR:ACQUIRE:_TRIG") {
     field(DESC, "Triggers the ACQUIRE record.")
     field(INPA, "$(DAQMX)CURR:ACQUIRE.VAL CP MS")
     field(CALC, "!A")
-    field(OUT, "$(DAQMX)CURR:ACQUIRE.VAL PP")
+    field(OUT, "$(P)$(DAQMX)CURR:ACQUIRE.VAL PP")
     field(OOPT, "When Non-zero")
 }
 
-record(longout, "$(DAQMX)CURR:ACQUIRE") {
+record(longout, "$(P)$(DAQMX)CURR:ACQUIRE") {
     field(DESC, "Acquires the data")
     field(SCAN, "1 second")
     field(DTYP, "asynUInt32Digital")
@@ -70,26 +82,26 @@ record(longout, "$(DAQMX)CURR:ACQUIRE") {
 
 ## SIM RECORDS
 
-record(waveform,  "$(DAQMX)CURR:WV:SIM") {
+record(waveform,  "$(P)$(DAQMX)CURR:WV:SIM") {
     field(DESC, "Simulates an array of data")
     
     field(NELM,  "$(NELM)")
     field(FTVL,  "DOUBLE")
 }
 
-record(acalcout, "$(DAQMX)CURR:SIM:CALC"){
+record(acalcout, "$(P)$(DAQMX)CURR:SIM:CALC"){
     field(DESC, "Converts simulated current to waveform")
     
-    field(INPA, "$(DAQMX)CURR:SIM CP")
+    field(INPA, "$(P)$(DAQMX)CURR:SIM CP")
     field(CALC, "ARR(A)")
     field(NELM,  "$(NELM)")
 
     field(OOPT, "Every Time")
-    field(OUT, "$(DAQMX)CURR:WV:SIM PP")
+    field(OUT, "$(P)$(DAQMX)CURR:WV:SIM PP")
     field(DOPT, "Use CALC")
 }
 
-record(ai, "$(DAQMX)CURR:SIM") {
+record(ai, "$(P)$(DAQMX)CURR:SIM") {
     field(DESC, "Simulates current")
     field(DTYP, "Soft Channel")
     field(PREC, "5")

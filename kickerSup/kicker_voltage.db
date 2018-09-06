@@ -18,23 +18,23 @@ record(ai, "$(P)VOLT")
 
 record(calc, "$(P)CALIBRATE:VOLT") {
     field(DESC, "Calibrates the voltage")
-    field(INPA, "$(DAQMX)VOLT:DATA CP MS")
+    field(INPA, "$(P)$(DAQMX)VOLT:DATA CP MS")
     field(CALC, "A * $(PSU_MAX_VOLT) / 10")
     field(PREC, "5")
 }
 
-record(subArray, "$(DAQMX)VOLT:DATA") {
+record(subArray, "$(P)$(DAQMX)VOLT:DATA") {
     field(DESC, "Reads a single raw voltage val")
     field(PINI, "NO")
     field(DTYP, "Soft Channel")
     field(PREC, "5")
-    field(INP, "$(DAQMX)VOLT:_RAW CP MS")
+    field(INP, "$(P)$(DAQMX)VOLT:_RAW CP MS")
     field(NELM, "1")
     field(INDX, "0")
     field(FTVL, "DOUBLE")
 }
 
-record(waveform, "$(DAQMX)VOLT:_RAW") {
+record(waveform, "$(P)$(DAQMX)VOLT:_RAW") {
     field(DESC, "Reads an array of raw voltage data")
     
     $(IFNOTRECSIM) field(SCAN,"I/O Intr")
@@ -49,21 +49,34 @@ record(waveform, "$(DAQMX)VOLT:_RAW") {
     field(EVNT, "1")
     
     field(SIML, "$(P)SIM")
-    field(SIOL, "$(DAQMX)VOLT:WV:SIM CP")
+    field(SIOL, "$(P)$(DAQMX)VOLT:WV:SIM CP")
     
     info(INTEREST, "LOW")
     info(archive, "VAL")
 }
 
-record(calcout, "$(DAQMX)VOLT:ACQUIRE:_TRIG") {
+## The two records below work together to tell
+## the DAQ to acquire data - otherwise no data is
+## populated in $(P)$(DAQMX)VOLT:_RAW record.
+## 
+## In order to acquire data we need to set the ACQUIRE record to 1.
+## The _TRIG record does this when it notices that the ACQUIRE
+## record is zero, setting the VAL field of ACQUIRE to 1.
+##
+## Next time the ACQUIRE record scans it will process the 
+## AQUIRE command with the acquire property set to 1 , 
+## triggering the asyn driver to acquire data from the DAQ.
+
+
+record(calcout, "$(P)$(DAQMX)VOLT:ACQUIRE:_TRIG") {
     field(DESC, "Triggers the ACQUIRE record.")
     field(INPA, "$(DAQMX)VOLT:ACQUIRE.VAL CP MS")
     field(CALC, "!A")
-    field(OUT, "$(DAQMX)VOLT:ACQUIRE.VAL PP")
+    field(OUT, "$(P)$(DAQMX)VOLT:ACQUIRE.VAL PP")
     field(OOPT, "When Non-zero")
 }
 
-record(longout, "$(DAQMX)VOLT:ACQUIRE"){
+record(longout, "$(P)$(DAQMX)VOLT:ACQUIRE"){
     field(DESC, "Acquires the data")
     field(SCAN, ".5 second")
     field(DTYP, "asynUInt32Digital")
@@ -72,25 +85,25 @@ record(longout, "$(DAQMX)VOLT:ACQUIRE"){
 
 ## SIM RECORDS
 
-record(waveform,  "$(DAQMX)VOLT:WV:SIM") {
+record(waveform,  "$(P)$(DAQMX)VOLT:WV:SIM") {
     field(DESC, "Simulates an array of data")
     field(DESC,  "Voltage simulation")
     field(NELM,  "$(NELM)")
     field(FTVL,  "DOUBLE")
 }
 
-record(acalcout, "$(DAQMX)VOLT:SIM:CALC"){
+record(acalcout, "$(P)$(DAQMX)VOLT:SIM:CALC"){
     field(DESC, "Converts simulated voltage to waveform")
-    field(INPA, "$(DAQMX)VOLT:SIM CP")
+    field(INPA, "$(P)$(DAQMX)VOLT:SIM CP")
     field(CALC, "ARR(A)")
     field(NELM,  "$(NELM)")
 
     field(OOPT, "Every Time")
-    field(OUT, "$(DAQMX)VOLT:WV:SIM PP")
+    field(OUT, "$(P)$(DAQMX)VOLT:WV:SIM PP")
     field(DOPT, "Use CALC")
 }
 
-record(ai, "$(DAQMX)VOLT:SIM") {
+record(ai, "$(P)$(DAQMX)VOLT:SIM") {
   field(DESC, "Simulates voltage")
   field(DTYP, "Soft Channel")
   field(PREC, "5")
