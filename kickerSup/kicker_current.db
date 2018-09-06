@@ -2,7 +2,7 @@ record(ai, "$(P)CURR") {
     field(DESC, "Kicker PSU current")
     field(EGU, "mA")
     field(DTYP, "Soft Channel")
-    field(INP,  "$(P)CALIBRATE:CURR CP MS")
+    field(INP,  "$(P)CURR:_CALIBRATE CP MS")
     field(PREC, "5")
 
     field(HIGH, "$(PSU_MAX_CURR)")
@@ -15,22 +15,22 @@ record(ai, "$(P)CURR") {
     info(archive, "VAL")
 }
 
-record(calc, "$(P)CALIBRATE:CURR") {
+record(calc, "$(P)CURR:_CALIBRATE") {
     field(DESC, "Calibrates the current")
-    field(INPA, "$(P)$(DAQMX)CURR:DATA CP MS")
+    field(INPA, "$(P)CURR:DATA:_AVG CP MS")
     field(CALC, "A * $(PSU_MAX_CURR) / 10")
     field(PREC, "5")
 }
 
-record(subArray, "$(P)$(DAQMX)CURR:DATA") {
-    field(DESC, "Reads a single raw current val")
-    field(PINI, "NO")
+record (acalcout, "$(P)CURR:DATA:_AVG") {
+    field(DESC, "Averages the RAW data array")
     field(DTYP, "Soft Channel")
-    field(PREC, "5")
-    field(INP, "$(P)$(DAQMX))CURR:_RAW CP MS")
-    field(NELM, "1")
-    field(INDX, "0")
-    field(FTVL, "DOUBLE")
+    field(NELM, "$(NELM)")
+    field(INAA, "$(P)$(DAQMX)CURR:_RAW CP MS")
+    
+    field(CALC, "AVG(AA)")
+    field(OOPT, "Every Time")
+    field(DOPT, "Use CALC")
 }
 
 record(waveform, "$(P)$(DAQMX)CURR:_RAW") {
@@ -47,7 +47,7 @@ record(waveform, "$(P)$(DAQMX)CURR:_RAW") {
     field(FTVL, "DOUBLE")
     field(EVNT, "1")
     field(SIML, "$(P)SIM")
-    field(SIOL, "$(P)$(DAQMX)CURR:WV:SIM CP")
+    field(SIOL, "$(P)$(DAQMX)CURR:WV:SIM CP MS")
 
     info(INTEREST, "LOW")
     info(archive, "VAL")
@@ -83,26 +83,8 @@ record(longout, "$(P)$(DAQMX)CURR:ACQUIRE") {
 ## SIM RECORDS
 
 record(waveform,  "$(P)$(DAQMX)CURR:WV:SIM") {
-    field(DESC, "Simulates an array of data")
+    field(DESC, "Simulates an array of current data")
     
     field(NELM,  "$(NELM)")
     field(FTVL,  "DOUBLE")
-}
-
-record(acalcout, "$(P)$(DAQMX)CURR:SIM:CALC"){
-    field(DESC, "Converts simulated current to waveform")
-    
-    field(INPA, "$(P)$(DAQMX)CURR:SIM CP")
-    field(CALC, "ARR(A)")
-    field(NELM,  "$(NELM)")
-
-    field(OOPT, "Every Time")
-    field(OUT, "$(P)$(DAQMX)CURR:WV:SIM PP")
-    field(DOPT, "Use CALC")
-}
-
-record(ai, "$(P)$(DAQMX)CURR:SIM") {
-    field(DESC, "Simulates current")
-    field(DTYP, "Soft Channel")
-    field(PREC, "5")
 }
